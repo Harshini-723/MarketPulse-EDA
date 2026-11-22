@@ -1,10 +1,12 @@
+
 # MarketPulse – Food Price Analysis Dashboard
 
-🚀 Live Application:
-https://your-marketpulse-app.streamlit.app
+🚀 **Live Website:** https://nli8stqnj2upwcxhu4bvs5.streamlit.app/
 
-💻 GitHub Repository:
-https://github.com/Harshini-723/MarketPulse
+💻 **GitHub Repository:** https://github.com/Harshini-723/MarketPulse-EDA
+
+MarketPulse is a Python Streamlit application for food price analysis, market comparisons and seasonal trend exploration.
+
 # MarketPulse – Food Price & Seasonal Trend Explorer
 
 MarketPulse is a beginner-friendly Streamlit application for exploring relationships between variables, category percentages, market/commodity comparisons and time-based patterns in food-price datasets. It supports both a built-in sample and user-uploaded CSV files.
