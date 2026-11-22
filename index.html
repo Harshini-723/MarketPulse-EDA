@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MarketPulse | Food Price Analytics</title>
+
+<title>MarketPulse | Food Price Analysis Dashboard</title>
 
 <style>
 * {
@@ -16,25 +17,22 @@
 body {
     font-family: Arial, sans-serif;
     background: #0b1220;
-    color: white;
+    color: #ffffff;
 }
 
 nav {
     padding: 22px 8%;
     background: #111c2e;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .logo {
-    font-size: 27px;
+    font-size: 28px;
     font-weight: bold;
     color: #4ade80;
 }
 
 .hero {
-    padding: 100px 8%;
+    padding: 110px 8%;
     text-align: center;
     background: linear-gradient(135deg, #123c35, #101827);
 }
@@ -42,47 +40,22 @@ nav {
 .tag {
     color: #4ade80;
     letter-spacing: 3px;
-    margin-bottom: 25px;
     font-size: 13px;
+    margin-bottom: 25px;
 }
 
 h1 {
     font-size: 48px;
+    line-height: 1.3;
     margin-bottom: 25px;
 }
 
 .hero p {
-    max-width: 720px;
+    max-width: 750px;
     margin: auto;
     color: #cbd5e1;
-    line-height: 1.8;
-}
-
-.buttons {
-    margin-top: 35px;
-}
-
-.btn {
-    display: inline-block;
-    padding: 15px 25px;
-    margin: 8px;
-    border-radius: 7px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.primary {
-    background: #22c55e;
-    color: #052e16;
-}
-
-.secondary {
-    border: 1px solid #4ade80;
-    color: white;
-}
-
-.btn:hover {
-    opacity: 0.8;
+    line-height: 1.9;
+    font-size: 17px;
 }
 
 section {
@@ -91,7 +64,7 @@ section {
 }
 
 h2 {
-    font-size: 30px;
+    font-size: 32px;
     margin-bottom: 35px;
 }
 
@@ -103,9 +76,10 @@ h2 {
 
 .card {
     background: #172337;
-    padding: 28px;
+    padding: 30px;
     border-radius: 12px;
     text-align: left;
+    border: 1px solid #26364b;
 }
 
 .card h3 {
@@ -115,18 +89,45 @@ h2 {
 
 .card p {
     color: #cbd5e1;
-    line-height: 1.7;
+    line-height: 1.8;
 }
 
 .about {
     background: #111c2e;
+}
+
+.about p {
+    max-width: 850px;
+    margin: auto;
+    color: #cbd5e1;
+    line-height: 1.9;
+}
+
+.workflow {
+    background: #0b1220;
+}
+
+.workflow p {
+    color: #cbd5e1;
     line-height: 1.8;
 }
 
 footer {
+    padding: 30px;
     text-align: center;
-    padding: 25px;
+    background: #111c2e;
     color: #94a3b8;
+    line-height: 1.8;
+}
+
+@media(max-width: 600px) {
+    h1 {
+        font-size: 34px;
+    }
+
+    .hero {
+        padding: 75px 6%;
+    }
 }
 </style>
 </head>
@@ -135,7 +136,6 @@ footer {
 
 <nav>
     <div class="logo">MarketPulse</div>
-    <div>Food Price Analytics</div>
 </nav>
 
 <header class="hero">
@@ -157,22 +157,6 @@ footer {
         food-price dataset.
     </p>
 
-    <div class="buttons">
-
-        <a class="btn primary"
-           href="https://nli8stqnj2upwcxhu4bvs5.streamlit.app/"
-           target="_blank">
-           Launch Live Dashboard
-        </a>
-
-        <a class="btn secondary"
-           href="https://github.com/Harshini-723/MarketPulse-EDA"
-           target="_blank">
-           View Source Code
-        </a>
-
-    </div>
-
 </header>
 
 <section>
@@ -182,32 +166,98 @@ footer {
 
         <div class="card">
             <h3>Dataset Overview</h3>
-            <p>Explore uploaded datasets, records, columns and data quality.</p>
+            <p>
+                Explore uploaded datasets, records,
+                columns, data types and dataset structure.
+            </p>
         </div>
 
         <div class="card">
-            <h3>Price Comparison</h3>
-            <p>Compare commodity prices across different markets.</p>
+            <h3>Data Quality Analysis</h3>
+            <p>
+                Identify missing values, duplicate records
+                and other data-quality issues.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Statistical Analysis</h3>
+            <p>
+                Calculate averages, minimums, maximums,
+                standard deviations and other statistics.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Variable Comparison</h3>
+            <p>
+                Compare food commodity prices across
+                different categories and markets.
+            </p>
         </div>
 
         <div class="card">
             <h3>Relationship Analysis</h3>
-            <p>Explore correlations and relationships between variables.</p>
+            <p>
+                Explore correlations and relationships
+                between variables using visualizations.
+            </p>
         </div>
 
         <div class="card">
             <h3>Multivariate Analysis</h3>
-            <p>Analyze multiple market variables together.</p>
+            <p>
+                Analyze multiple market variables together
+                to explore patterns and relationships.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Percentage Analysis</h3>
+            <p>
+                Examine percentage distributions and
+                changes in the available dataset.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Contingency Analysis</h3>
+            <p>
+                Explore relationships between categorical
+                variables using contingency tables.
+            </p>
         </div>
 
         <div class="card">
             <h3>Time-Series Analysis</h3>
-            <p>Explore historical food price movements and trends.</p>
+            <p>
+                Explore historical food price movements
+                and changes over time.
+            </p>
         </div>
 
         <div class="card">
             <h3>Resampling</h3>
-            <p>Summarize prices across weekly, monthly and other supported periods.</p>
+            <p>
+                Summarize time-series data into supported
+                daily, weekly, monthly or yearly periods.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>CSV Upload</h3>
+            <p>
+                Upload your own food-price dataset
+                for interactive data analysis.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Data Export</h3>
+            <p>
+                Download prepared datasets and available
+                analysis results from the application.
+            </p>
         </div>
 
     </div>
@@ -218,16 +268,63 @@ footer {
 
     <p>
         MarketPulse is a food price analytics application
-        developed using Python, Streamlit and Pandas.
-        It helps users upload CSV datasets, perform
-        statistical analysis, compare commodities and
-        understand historical market price trends.
+        developed using Python, Streamlit, Pandas, NumPy
+        and data visualization libraries.
+
+        It provides users with a simple platform to upload
+        CSV datasets, perform statistical analysis,
+        compare commodities, explore relationships and
+        understand historical food price trends.
+
+        The application helps users simplify data analysis
+        and gain insights from food market datasets.
     </p>
+</section>
+
+<section class="workflow">
+    <h2>How It Works</h2>
+
+    <div class="features">
+
+        <div class="card">
+            <h3>01. Upload Dataset</h3>
+            <p>
+                Upload a food-price CSV dataset
+                from your computer.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>02. Analyze Data</h3>
+            <p>
+                Explore statistical summaries,
+                comparisons and visualizations.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>03. Explore Trends</h3>
+            <p>
+                Understand commodity relationships
+                and historical price movements.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>04. Download Results</h3>
+            <p>
+                Export cleaned data and supported
+                analysis outputs.
+            </p>
+        </div>
+
+    </div>
 </section>
 
 <footer>
     <p>MarketPulse | Food Price Analysis Dashboard</p>
     <p>Developed by Harshini</p>
+    <p>Python | Streamlit | Pandas | NumPy</p>
 </footer>
 
 </body>
