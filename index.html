@@ -1,15 +1,234 @@
-<div class="buttons">
 
-    <a class="btn primary"
-       href="https://nli8stqnj2upwcxhu4bvs5.streamlit.app/"
-       target="_blank">
-       Launch Live Dashboard
-    </a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarketPulse | Food Price Analytics</title>
 
-    <a class="btn secondary"
-       href="https://github.com/Harshini-723/MarketPulse-EDA"
-       target="_blank">
-       View Source Code
-    </a>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-</div>
+body {
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: white;
+}
+
+nav {
+    padding: 22px 8%;
+    background: #111c2e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: #4ade80;
+}
+
+.hero {
+    padding: 100px 8%;
+    text-align: center;
+    background: linear-gradient(135deg, #123c35, #101827);
+}
+
+.tag {
+    color: #4ade80;
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+    font-size: 13px;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 25px;
+}
+
+.hero p {
+    max-width: 720px;
+    margin: auto;
+    color: #cbd5e1;
+    line-height: 1.8;
+}
+
+.buttons {
+    margin-top: 35px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 25px;
+    margin: 8px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.primary {
+    background: #22c55e;
+    color: #052e16;
+}
+
+.secondary {
+    border: 1px solid #4ade80;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+section {
+    padding: 70px 8%;
+    text-align: center;
+}
+
+h2 {
+    font-size: 30px;
+    margin-bottom: 35px;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+}
+
+.card {
+    background: #172337;
+    padding: 28px;
+    border-radius: 12px;
+    text-align: left;
+}
+
+.card h3 {
+    color: #4ade80;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: #cbd5e1;
+    line-height: 1.7;
+}
+
+.about {
+    background: #111c2e;
+    line-height: 1.8;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">MarketPulse</div>
+    <div>Food Price Analytics</div>
+</nav>
+
+<header class="hero">
+
+    <div class="tag">
+        FOOD PRICE ANALYTICS & MARKET INSIGHTS
+    </div>
+
+    <h1>
+        MarketPulse<br>
+        Food Price Analysis Dashboard
+    </h1>
+
+    <p>
+        Analyze food prices, compare commodities,
+        explore market relationships and visualize
+        seasonal trends using interactive data analytics.
+        Upload your own CSV or begin with the included
+        food-price dataset.
+    </p>
+
+    <div class="buttons">
+
+        <a class="btn primary"
+           href="https://nli8stqnj2upwcxhu4bvs5.streamlit.app/"
+           target="_blank">
+           Launch Live Dashboard
+        </a>
+
+        <a class="btn secondary"
+           href="https://github.com/Harshini-723/MarketPulse-EDA"
+           target="_blank">
+           View Source Code
+        </a>
+
+    </div>
+
+</header>
+
+<section>
+    <h2>Key Features</h2>
+
+    <div class="features">
+
+        <div class="card">
+            <h3>Dataset Overview</h3>
+            <p>Explore uploaded datasets, records, columns and data quality.</p>
+        </div>
+
+        <div class="card">
+            <h3>Price Comparison</h3>
+            <p>Compare commodity prices across different markets.</p>
+        </div>
+
+        <div class="card">
+            <h3>Relationship Analysis</h3>
+            <p>Explore correlations and relationships between variables.</p>
+        </div>
+
+        <div class="card">
+            <h3>Multivariate Analysis</h3>
+            <p>Analyze multiple market variables together.</p>
+        </div>
+
+        <div class="card">
+            <h3>Time-Series Analysis</h3>
+            <p>Explore historical food price movements and trends.</p>
+        </div>
+
+        <div class="card">
+            <h3>Resampling</h3>
+            <p>Summarize prices across weekly, monthly and other supported periods.</p>
+        </div>
+
+    </div>
+</section>
+
+<section class="about">
+    <h2>About MarketPulse</h2>
+
+    <p>
+        MarketPulse is a food price analytics application
+        developed using Python, Streamlit and Pandas.
+        It helps users upload CSV datasets, perform
+        statistical analysis, compare commodities and
+        understand historical market price trends.
+    </p>
+</section>
+
+<footer>
+    <p>MarketPulse | Food Price Analysis Dashboard</p>
+    <p>Developed by Harshini</p>
+</footer>
+
+</body>
+</html>
