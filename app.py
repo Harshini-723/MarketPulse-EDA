@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from pathlib import Path
-from io import BytesIO
 
 
 # =========================================================
@@ -22,7 +21,7 @@ st.set_page_config(
 
 
 # =========================================================
-# PATH CONFIGURATION
+# FILE PATHS
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -30,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent
 SAMPLE_PATHS = [
     BASE_DIR / "data" / "sample_market_prices.csv",
     BASE_DIR / "dataset" / "sample_market_prices.csv",
-    BASE_DIR / "sample_market_prices.csv",
+    BASE_DIR / "sample_market_prices.csv"
 ]
 
 
@@ -40,56 +39,91 @@ SAMPLE_PATHS = [
 
 st.markdown("""
 <style>
-    .stApp {
-        background: linear-gradient(135deg, #f5faf9, #eef5f4);
-    }
 
-    [data-testid="stSidebar"] {
-        background-color: #10343c;
-    }
+.stApp {
+    background: linear-gradient(135deg, #f5faf9, #eef5f4);
+}
 
-    [data-testid="stSidebar"] * {
-        color: white !important;
-    }
+/* Sidebar */
 
-    .main-title {
-        font-size: 38px;
-        font-weight: 800;
-        color: #153b40;
-    }
+[data-testid="stSidebar"] {
+    background-color: #10343c;
+}
 
-    .sub-title {
-        color: #71868b;
-        font-size: 16px;
-    }
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
 
-    .metric-card {
-        background-color: white;
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid #dce9e6;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
+/* Main title */
 
-    .footer {
-        text-align: center;
-        color: #84999d;
-        padding: 25px;
-        font-size: 13px;
-    }
+.main-title {
+    font-size: 38px;
+    font-weight: 800;
+    color: #153b40;
+}
 
-    div.stButton > button {
-        background-color: #126b5c;
-        color: white;
-        border-radius: 9px;
-        border: none;
-        padding: 10px 18px;
-    }
+.sub-title {
+    color: #71868b;
+    font-size: 16px;
+}
 
-    div.stButton > button:hover {
-        background-color: #0d5147;
-        color: white;
-    }
+/* Active dataset card */
+
+.active-dataset-card {
+    background-color: #e8f5ef !important;
+    color: #164b3c !important;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #b8dfcc;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.active-dataset-card,
+.active-dataset-card * {
+    color: #164b3c !important;
+}
+
+/* Sidebar captions */
+
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+    color: #b8d0d3 !important;
+}
+
+/* Sidebar warning */
+
+[data-testid="stSidebar"] [data-testid="stAlert"] {
+    background-color: #e8f5ef !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stAlert"] p {
+    color: #164b3c !important;
+}
+
+/* Footer */
+
+.footer {
+    text-align: center;
+    color: #84999d;
+    padding: 25px;
+    font-size: 13px;
+}
+
+/* Buttons */
+
+div.stButton > button {
+    background-color: #126b5c;
+    color: white;
+    border-radius: 9px;
+    border: none;
+    padding: 10px 18px;
+}
+
+div.stButton > button:hover {
+    background-color: #0d5147;
+    color: white;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -98,21 +132,20 @@ st.markdown("""
 # SESSION STATE
 # =========================================================
 
-if "data" not in st.session_state:
-    st.session_state.data = None
+defaults = {
+    "data": None,
+    "dataset_name": None,
+    "resampled_data": None,
+    "cleaned_data": None
+}
 
-if "dataset_name" not in st.session_state:
-    st.session_state.dataset_name = None
-
-if "resampled_data" not in st.session_state:
-    st.session_state.resampled_data = None
-
-if "cleaned_data" not in st.session_state:
-    st.session_state.cleaned_data = None
+for key, value in defaults.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 
 # =========================================================
-# DATASET LOADING
+# DATASET FUNCTIONS
 # =========================================================
 
 def find_sample_file():
@@ -129,13 +162,9 @@ def load_sample_dataset():
     sample_path = find_sample_file()
 
     if sample_path is None:
-        st.error(
-            "Sample dataset file not found. "
-            "Please check that sample_market_prices.csv "
-            "is inside the data folder."
-        )
+        st.error("Sample dataset file not found.")
         st.info(
-            "Expected path: data/sample_market_prices.csv"
+            "Expected location: data/sample_market_prices.csv"
         )
         return None
 
@@ -143,7 +172,7 @@ def load_sample_dataset():
         df = pd.read_csv(sample_path)
 
         if df.empty:
-            st.error("The sample CSV file is empty.")
+            st.error("Sample dataset is empty.")
             return None
 
         df.columns = df.columns.astype(str).str.strip()
@@ -151,7 +180,7 @@ def load_sample_dataset():
         return df
 
     except Exception as e:
-        st.error(f"Unable to load sample dataset: {e}")
+        st.error(f"Sample dataset loading error: {e}")
         return None
 
 
@@ -161,7 +190,7 @@ def load_uploaded_dataset(uploaded_file):
         df = pd.read_csv(uploaded_file)
 
         if df.empty:
-            st.error("Uploaded CSV file is empty.")
+            st.error("Uploaded dataset is empty.")
             return None
 
         df.columns = df.columns.astype(str).str.strip()
@@ -169,7 +198,7 @@ def load_uploaded_dataset(uploaded_file):
         return df
 
     except Exception as e:
-        st.error(f"Unable to read uploaded CSV: {e}")
+        st.error(f"CSV loading error: {e}")
         return None
 
 
@@ -177,6 +206,7 @@ def set_dataset(df, name):
 
     st.session_state.data = df.copy()
     st.session_state.dataset_name = name
+
     st.session_state.resampled_data = None
     st.session_state.cleaned_data = None
 
@@ -187,52 +217,53 @@ def set_dataset(df, name):
 
 def get_numeric_columns(df):
 
-    numeric_columns = []
+    result = []
 
     for col in df.columns:
 
-        converted = pd.to_numeric(
+        values = pd.to_numeric(
             df[col],
             errors="coerce"
         )
 
-        if converted.notna().sum() > 0:
-            if converted.notna().sum() >= max(1, int(len(df) * 0.5)):
-                numeric_columns.append(col)
+        valid_count = values.notna().sum()
 
-    return numeric_columns
+        if valid_count >= max(1, int(len(df) * 0.5)):
+            result.append(col)
+
+    return result
 
 
 def get_categorical_columns(df):
 
-    numeric_columns = get_numeric_columns(df)
+    numeric_cols = get_numeric_columns(df)
 
     return [
         col for col in df.columns
-        if col not in numeric_columns
+        if col not in numeric_cols
     ]
 
 
 def get_date_columns(df):
 
-    date_columns = []
+    result = []
 
     for col in df.columns:
 
         if pd.api.types.is_numeric_dtype(df[col]):
             continue
 
-        parsed = pd.to_datetime(
+        values = pd.to_datetime(
             df[col],
             errors="coerce"
         )
 
-        if parsed.notna().sum() >= max(
+        if values.notna().sum() >= max(
             1, int(len(df) * 0.7)
         ):
-            date_columns.append(col)
+            result.append(col)
 
-    return date_columns
+    return result
 
 
 def numeric_series(df, column):
@@ -244,12 +275,16 @@ def numeric_series(df, column):
 
 
 # =========================================================
-# CHART HELPER
+# CHART FUNCTION
 # =========================================================
 
 def show_chart(fig):
 
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(
+        fig,
+        use_container_width=True
+    )
+
     plt.close(fig)
 
 
@@ -259,9 +294,7 @@ def show_chart(fig):
 
 with st.sidebar:
 
-    st.markdown(
-        "## 📈 MarketPulse"
-    )
+    st.markdown("## 📈 MarketPulse")
 
     st.caption(
         "Food Price & Seasonal Trend Explorer"
@@ -295,8 +328,13 @@ with st.sidebar:
 
     if st.session_state.data is not None:
 
-        st.success(
-            st.session_state.dataset_name
+        st.markdown(
+            f"""
+            <div class="active-dataset-card">
+                📊 {st.session_state.dataset_name}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
         st.caption(
@@ -313,14 +351,14 @@ with st.sidebar:
 
 
 # =========================================================
-# DATASET REFERENCES
+# CURRENT DATASET
 # =========================================================
 
 df = st.session_state.data
 
 
 # =========================================================
-# HOME PAGE
+# HOME
 # =========================================================
 
 if page == "Home":
@@ -341,38 +379,31 @@ if page == "Home":
 
     st.markdown("### Welcome to MarketPulse")
 
-    st.write(
-        """
-        MarketPulse is an interactive Exploratory Data Analysis
-        dashboard designed to study food prices, market variations,
-        seasonal patterns, and relationships between variables.
-        """
-    )
+    st.write("""
+    MarketPulse is an interactive Exploratory Data Analysis
+    dashboard designed to study food prices, market variations,
+    seasonal patterns, and relationships between variables.
+    """)
 
     col1, col2, col3 = st.columns(3)
 
-    with col1:
-        st.info("📊 Dataset Analysis")
-
-    with col2:
-        st.info("📈 Trend Analysis")
-
-    with col3:
-        st.info("🔍 Statistical Analysis")
+    col1.info("📊 Dataset Analysis")
+    col2.info("📈 Trend Analysis")
+    col3.info("🔍 Statistical Analysis")
 
     st.divider()
 
     st.markdown("### Getting Started")
 
     st.write("1. Open Dataset Upload.")
-    st.write("2. Upload your CSV or load the included sample dataset.")
-    st.write("3. Explore the available analysis pages.")
-    st.write("4. Export your analysis results.")
+    st.write("2. Upload a CSV or load the sample dataset.")
+    st.write("3. Explore the analysis pages.")
+    st.write("4. Export your results.")
 
     if df is not None:
 
         st.success(
-            f"Currently loaded: {st.session_state.dataset_name}"
+            f"Active dataset: {st.session_state.dataset_name}"
         )
 
         st.dataframe(
@@ -382,7 +413,7 @@ if page == "Home":
 
 
 # =========================================================
-# DATASET UPLOAD PAGE
+# DATASET UPLOAD
 # =========================================================
 
 elif page == "Dataset Upload":
@@ -492,8 +523,14 @@ elif page == "Dataset Overview":
 
         col1.metric("Total Rows", len(df))
         col2.metric("Total Columns", len(df.columns))
-        col3.metric("Missing Values", int(df.isna().sum().sum()))
-        col4.metric("Duplicate Rows", int(df.duplicated().sum()))
+        col3.metric(
+            "Missing Values",
+            int(df.isna().sum().sum())
+        )
+        col4.metric(
+            "Duplicate Rows",
+            int(df.duplicated().sum())
+        )
 
         st.divider()
 
@@ -588,13 +625,15 @@ elif page == "Variable Comparison":
 
             if selected_columns:
 
+                selected_data = df[selected_columns].apply(
+                    pd.to_numeric,
+                    errors="coerce"
+                )
+
                 st.subheader("Descriptive Statistics")
 
                 st.dataframe(
-                    df[selected_columns].apply(
-                        pd.to_numeric,
-                        errors="coerce"
-                    ).describe(),
+                    selected_data.describe(),
                     use_container_width=True
                 )
 
@@ -714,11 +753,6 @@ elif page == "Relationship Analysis":
                     f"{correlation:.3f}"
                 )
 
-                st.write(
-                    "Correlation measures the strength and direction "
-                    "of the linear relationship between two variables."
-                )
-
             st.divider()
 
             st.subheader("Correlation Matrix")
@@ -728,9 +762,7 @@ elif page == "Relationship Analysis":
                 errors="coerce"
             ).corr()
 
-            fig, ax = plt.subplots(
-                figsize=(10, 6)
-            )
+            fig, ax = plt.subplots(figsize=(10, 6))
 
             sns.heatmap(
                 corr,
@@ -775,6 +807,7 @@ elif page == "Multivariate Analysis":
                 ).dropna()
 
                 if len(plot_df) > 500:
+
                     plot_df = plot_df.sample(
                         500,
                         random_state=42
@@ -784,28 +817,24 @@ elif page == "Multivariate Analysis":
 
                     st.subheader("Pair Plot")
 
-                    fig = sns.pairplot(
+                    pair_fig = sns.pairplot(
                         plot_df,
                         diag_kind="hist"
                     )
 
                     st.pyplot(
-                        fig.figure,
+                        pair_fig.figure,
                         use_container_width=True
                     )
 
-                    plt.close(fig.figure)
+                    plt.close(pair_fig.figure)
 
                     st.subheader("Multivariate Correlation")
 
-                    corr = plot_df.corr()
-
-                    fig, ax = plt.subplots(
-                        figsize=(9, 6)
-                    )
+                    fig, ax = plt.subplots(figsize=(9, 6))
 
                     sns.heatmap(
-                        corr,
+                        plot_df.corr(),
                         annot=True,
                         cmap="viridis",
                         ax=ax
@@ -816,7 +845,7 @@ elif page == "Multivariate Analysis":
                 else:
 
                     st.warning(
-                        "Selected columns contain no usable numeric data."
+                        "No usable numeric data in selected columns."
                     )
 
         else:
@@ -988,7 +1017,7 @@ elif page == "Contingency Analysis":
 
 
 # =========================================================
-# TIME SERIES ANALYSIS
+# TIME-SERIES ANALYSIS
 # =========================================================
 
 elif page == "Time-Series Analysis":
@@ -1013,7 +1042,7 @@ elif page == "Time-Series Analysis":
         elif not numeric_cols:
 
             st.warning(
-                "No numeric variable available for time-series analysis."
+                "No numeric variable available."
             )
 
         else:
@@ -1050,11 +1079,21 @@ elif page == "Time-Series Analysis":
 
             if len(time_df) > 0:
 
+                st.subheader("Time-Series Trend")
+
+                # Aggregate multiple records per date
+                trend_df = (
+                    time_df.groupby(date_col)[value_col]
+                    .mean()
+                    .reset_index()
+                    .sort_values(date_col)
+                )
+
                 fig, ax = plt.subplots(figsize=(11, 5))
 
                 ax.plot(
-                    time_df[date_col],
-                    time_df[value_col],
+                    trend_df[date_col],
+                    trend_df[value_col],
                     marker="o",
                     linewidth=1.5
                 )
@@ -1071,14 +1110,21 @@ elif page == "Time-Series Analysis":
 
                 show_chart(fig)
 
-                st.subheader("Time-Series Summary")
+                st.subheader("Year-wise Average")
 
-                st.write(
-                    time_df.groupby(
-                        time_df[date_col].dt.year
-                    )[value_col].mean().reset_index(
-                        name="Average"
+                yearly = (
+                    trend_df
+                    .assign(
+                        Year=trend_df[date_col].dt.year
                     )
+                    .groupby("Year")[value_col]
+                    .mean()
+                    .reset_index()
+                )
+
+                st.dataframe(
+                    yearly,
+                    use_container_width=True
                 )
 
             else:
@@ -1109,7 +1155,7 @@ elif page == "Resampling":
         if not date_cols or not numeric_cols:
 
             st.warning(
-                "A valid date column and numeric column are required."
+                "A valid date and numeric column are required."
             )
 
         else:
@@ -1124,20 +1170,26 @@ elif page == "Resampling":
                 numeric_cols
             )
 
-            frequency = st.selectbox(
+            frequency_label = st.selectbox(
                 "Resampling frequency",
-                {
-                    "Daily": "D",
-                    "Weekly": "W",
-                    "Monthly": "MS",
-                    "Quarterly": "QS",
-                    "Yearly": "YS"
-                }.keys()
+                [
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Quarterly",
+                    "Yearly"
+                ]
             )
 
             aggregation = st.selectbox(
                 "Aggregation method",
-                ["mean", "sum", "min", "max", "median"]
+                [
+                    "mean",
+                    "sum",
+                    "min",
+                    "max",
+                    "median"
+                ]
             )
 
             group_col = st.selectbox(
@@ -1146,6 +1198,14 @@ elif page == "Resampling":
             )
 
             if st.button("Perform Resampling"):
+
+                freq_map = {
+                    "Daily": "D",
+                    "Weekly": "W",
+                    "Monthly": "MS",
+                    "Quarterly": "QS",
+                    "Yearly": "YS"
+                }
 
                 working_df = df.copy()
 
@@ -1163,66 +1223,69 @@ elif page == "Resampling":
                     subset=[date_col, value_col]
                 )
 
-                freq_map = {
-                    "Daily": "D",
-                    "Weekly": "W",
-                    "Monthly": "MS",
-                    "Quarterly": "QS",
-                    "Yearly": "YS"
-                }
+                if working_df.empty:
 
-                freq = freq_map[frequency]
-
-                if group_col == "None":
-
-                    result = (
-                        working_df
-                        .set_index(date_col)[value_col]
-                        .resample(freq)
-                        .agg(aggregation)
-                        .reset_index()
+                    st.error(
+                        "No valid records available for resampling."
                     )
 
                 else:
 
-                    result = (
-                        working_df
-                        .set_index(date_col)
-                        .groupby(group_col)[value_col]
-                        .resample(freq)
-                        .agg(aggregation)
-                        .reset_index()
+                    freq = freq_map[frequency_label]
+
+                    if group_col == "None":
+
+                        result = (
+                            working_df
+                            .set_index(date_col)[value_col]
+                            .resample(freq)
+                            .agg(aggregation)
+                            .reset_index()
+                        )
+
+                    else:
+
+                        result = (
+                            working_df
+                            .set_index(date_col)
+                            .groupby(group_col)[value_col]
+                            .resample(freq)
+                            .agg(aggregation)
+                            .reset_index()
+                        )
+
+                    st.session_state.resampled_data = result
+
+                    st.success(
+                        "Resampling completed successfully!"
                     )
 
-                st.session_state.resampled_data = result
+            result = st.session_state.resampled_data
 
-                st.success(
-                    "Resampling completed successfully!"
-                )
-
-            if st.session_state.resampled_data is not None:
+            if result is not None:
 
                 st.subheader("Resampled Dataset")
 
                 st.dataframe(
-                    st.session_state.resampled_data,
+                    result,
                     use_container_width=True
                 )
 
                 st.subheader("Resampled Trend")
 
-                result = st.session_state.resampled_data
-
-                result_date_col = date_col
-
                 fig, ax = plt.subplots(figsize=(10, 5))
 
-                if group_col != "None" and group_col in result.columns:
+                if (
+                    group_col != "None"
+                    and group_col in result.columns
+                ):
 
-                    for group_name, group_data in result.groupby(group_col):
+                    for group_name, group_data in result.groupby(
+                        group_col
+                    ):
 
                         ax.plot(
-                            group_data[result_date_col],
+                            group_data[date_col],
                             group_data[value_col],
                             marker="o",
                             label=str(group_name)
@@ -1233,12 +1296,13 @@ elif page == "Resampling":
                 else:
 
                     ax.plot(
-                        result[result_date_col],
+                        result[date_col],
                         result[value_col],
                         marker="o"
                     )
 
                 ax.set_title("Resampled Time-Series Trend")
+
                 plt.xticks(rotation=45)
                 plt.tight_layout()
 
